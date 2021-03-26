@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError } from 'typeorm';
 
@@ -8,6 +8,9 @@ import {Errors, Messages} from '../common/utils';
 
 @Injectable()
 export class CategoryService {
+    
+    private readonly logger = new Logger('CategoryService');
+
     constructor(@InjectRepository(Category) private categoryRepository: Repository<Category>) {}
 
     async findAllCategory() {
@@ -15,7 +18,7 @@ export class CategoryService {
             const category = await this.categoryRepository.find();
             return category;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -28,7 +31,7 @@ export class CategoryService {
             }
             return category;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -38,7 +41,7 @@ export class CategoryService {
             const result = await this.categoryRepository.insert(createCategoryDto);
             return {message: Messages.CATEGORY_CREATED_SUCCESSFULLY, createCategoryDto};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             if(err instanceof QueryFailedError) {
                 return new HttpException(Errors.CATEGORY_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
             }
@@ -54,7 +57,7 @@ export class CategoryService {
             }
             return {message: Messages.CATEGORY_DELETED_SUCCESSFULLY};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -73,7 +76,7 @@ export class CategoryService {
             }
             return {message: Messages.CATEGORY_UPDATED_SUCCESSFULLY, updateCategoryDto};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

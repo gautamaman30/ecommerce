@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueryFailedError, Repository, Connection } from 'typeorm';
 
@@ -9,6 +9,8 @@ import { Errors, Messages, helperFunctions } from '../common/utils/index';
 
 @Injectable()
 export class UsersService {
+
+    private readonly logger = new Logger('UsersService');
 
     constructor(@InjectRepository(Users) private usersRepository: Repository<Users>
         , private connection: Connection) {}
@@ -21,7 +23,7 @@ export class UsersService {
             }
             return new GetUsersDto(result);
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         } 
     }
@@ -31,7 +33,7 @@ export class UsersService {
             let result = await this.usersRepository.find();
             return result.map(item => new GetUsersDto(item));
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         } 
     }
@@ -41,7 +43,7 @@ export class UsersService {
             let result = await this.usersRepository.findOne(username);
             return result;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         } 
     }
@@ -66,7 +68,7 @@ export class UsersService {
             const token = await helperFunctions.signToken({username: createUsersDto.username});
             return {message: Messages.USER_CREATED_SUCCESSFULLY, token};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             if(err instanceof QueryFailedError) {
                 return new HttpException(Errors.USERNAME_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
             }
@@ -87,7 +89,7 @@ export class UsersService {
             const token = await helperFunctions.signToken({username: loginUsersDto.username});
             return {message: Messages.USER_LOGGED_IN_SUCCESSFULLY, token};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -105,7 +107,7 @@ export class UsersService {
             }
             return {message: Messages.USER_DELETED_SUCCESSFULLY};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -126,7 +128,7 @@ export class UsersService {
             }
             return {message: Messages.USER_UPDATED_SUCCESSFULLY};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -139,7 +141,7 @@ export class UsersService {
             }
             return {message: Messages.USER_UPDATED_SUCCESSFULLY};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

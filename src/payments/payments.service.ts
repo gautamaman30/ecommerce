@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -9,6 +9,9 @@ import {Errors, Messages} from '../common/utils';
 
 @Injectable()
 export class PaymentsService {
+
+    private readonly logger = new Logger('PaymentsService');
+
     constructor(@InjectRepository(Payments) private paymentsRepository: Repository<Payments>) {}
 
     async findAllPayments() {
@@ -16,7 +19,7 @@ export class PaymentsService {
             const payments = await this.paymentsRepository.find();
             return payments;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -29,7 +32,7 @@ export class PaymentsService {
             }
             return payment;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -42,7 +45,7 @@ export class PaymentsService {
             }
             return payments;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -55,7 +58,7 @@ export class PaymentsService {
             }
             return {message: Messages.PAYMENT_DELETED_SUCCESSFULLY, payment_id};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

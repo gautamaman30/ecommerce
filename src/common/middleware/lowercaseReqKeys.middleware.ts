@@ -1,9 +1,8 @@
 import { Injectable, NestMiddleware, Req, Res, Next } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
 export class LowercaseReqKeysMiddleware implements NestMiddleware {
-    use(@Req() req: Request,@Res() res: Response,@Next() next: NextFunction) {
+    use(@Req() req, @Res() res, @Next() next) {
         for(let key in req.body) {
             req.body[key.toLowerCase()] = req.body[key];
         }

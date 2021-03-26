@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
 
@@ -8,6 +8,9 @@ import {Errors, Messages, helperFunctions} from '../common/utils';
 
 @Injectable()
 export class ProductsService {
+    
+    private readonly logger = new Logger('ProductsService');
+
     constructor(@InjectRepository(Products) private productsRepository: Repository<Products>, 
         private connection: Connection) {}
 
@@ -16,7 +19,7 @@ export class ProductsService {
             const products = await this.productsRepository.find();
             return products;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -29,7 +32,7 @@ export class ProductsService {
             }
             return product;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -42,7 +45,7 @@ export class ProductsService {
             }
             return products;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -55,7 +58,7 @@ export class ProductsService {
             }
             return products;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -77,7 +80,7 @@ export class ProductsService {
             }
             return {message: Messages.PRODUCT_CREATED_SUCCESSFULLY, createProductsDto};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -90,7 +93,7 @@ export class ProductsService {
             }
             return {message: Messages.PRODUCT_DELETED_SUCCESSFULLY};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -118,7 +121,7 @@ export class ProductsService {
             }
             return {message: Messages.PRODUCT_UPDATED_SUCCESSFULLY, updateProductsDto};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository} from '@nestjs/typeorm';
 import { Repository, QueryFailedError, Connection} from 'typeorm';
 
@@ -11,6 +11,9 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class SellersService {
+
+    private readonly logger = new Logger('SellersService');
+
     constructor(@InjectRepository(Sellers) private sellersRepository: Repository<Sellers>, 
         private readonly usersService: UsersService, 
         private connection: Connection){}
@@ -25,7 +28,7 @@ export class SellersService {
             });
             return {message: Messages.SELLER_CREATED_SUCCESSFULLY, sellers_id, username};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             if(err instanceof QueryFailedError) {
                 return new HttpException(Errors.USERNAME_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
             }
@@ -42,7 +45,7 @@ export class SellersService {
             const {username, ...rest} = await this.sellersRepository.findOne(verifySellersAccountDto);
             return this.usersService.updateUsersRoles(username, 'sellers');
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -63,7 +66,7 @@ export class SellersService {
             }
             return {message: Messages.SELLER_DELETED_SUCCESSFULLY};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -80,7 +83,7 @@ export class SellersService {
             }
             return seller;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -93,7 +96,7 @@ export class SellersService {
             }
             return seller;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -103,7 +106,7 @@ export class SellersService {
             const sellers = await this.sellersRepository.find();
             return sellers;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

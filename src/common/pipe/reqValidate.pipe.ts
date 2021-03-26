@@ -1,9 +1,10 @@
 import { PipeTransform, Injectable, BadRequestException, Logger } from '@nestjs/common';
-
-const logger = new Logger('reqValidationPipe');
     
 @Injectable()
 export class ReqValidationPipe implements PipeTransform {
+    
+    private readonly logger = new Logger('ReqValidationPipe');
+    
     constructor(private schema) {}
 
     async transform(value: any) {
@@ -11,7 +12,7 @@ export class ReqValidationPipe implements PipeTransform {
             const result = await this.schema.validate(value);
             return result;
         } catch(err) {
-            logger.log(err.message);
+            this.logger.log(err.message);
             throw new BadRequestException(err.message);
         }
     }

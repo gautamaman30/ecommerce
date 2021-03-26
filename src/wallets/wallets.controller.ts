@@ -1,4 +1,4 @@
-import { Controller, UseGuards, UsePipes, Get, Post, Delete, Put, Body, Param, Query, Req } from '@nestjs/common';
+import { Controller, UseGuards, Get, Req} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 
 import {WalletsService} from './wallets.service';

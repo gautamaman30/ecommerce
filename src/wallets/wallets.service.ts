@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from 'typeorm';
 
@@ -8,6 +8,8 @@ import { Errors } from '../common/utils/index';
 
 @Injectable()
 export class WalletsService {
+
+    private readonly logger = new Logger('WalletsService');
     constructor(@InjectRepository(Wallets) private walletsRepository: Repository<Wallets>) {}
 
     async findWallet(username: string) {
@@ -18,7 +20,7 @@ export class WalletsService {
             }
             return result;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

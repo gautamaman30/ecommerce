@@ -1,5 +1,5 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
 
 import { Orders } from './entity';
@@ -12,6 +12,9 @@ import {Errors, helperFunctions, Messages} from '../common/utils';
 
 @Injectable()
 export class OrdersService {
+
+    private readonly logger = new Logger('OrdersService');
+
     constructor(@InjectRepository(Orders) private ordersRepository: Repository<Orders>, 
         private connection: Connection) {}
 
@@ -20,7 +23,7 @@ export class OrdersService {
             const orders = await this.ordersRepository.find({customer_id});
             return orders;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -30,7 +33,7 @@ export class OrdersService {
             const orders = await this.ordersRepository.find();
             return orders;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -43,7 +46,7 @@ export class OrdersService {
             }
             return order;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -53,7 +56,7 @@ export class OrdersService {
             const orders = await this.ordersRepository.find(getOrdersByProductsIdDto);
             return orders;
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -82,10 +85,8 @@ export class OrdersService {
                 
                 const seller = await manager.findOne(Sellers, {sellers_id: product.sellers_id});
                 const seller_wallet = await manager.findOne(Wallets, {username: seller.username});
-                console.log(seller_wallet);
                 seller_wallet.balance =  total_amount + seller_wallet.balance;
-                console.log(seller_wallet);
-
+                
                 await manager.save(Wallets, buyer_wallet);
                 await manager.save(Wallets, seller_wallet);
                 
@@ -113,7 +114,7 @@ export class OrdersService {
             }
             return {message: Messages.ORDER_CREATED_SUCCESSFULLY, order_id};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -142,7 +143,7 @@ export class OrdersService {
             }
             return {message: Messages.ORDER_DELETED_SUCCESSFULLY, order_id};
         } catch(err) {
-            console.log(err.message);
+            this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
