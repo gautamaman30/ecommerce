@@ -1,4 +1,4 @@
-import { Controller, Post, UsePipes, Req, Body } from '@nestjs/common';
+import { Controller, Post, UsePipes, Body } from '@nestjs/common';
 import {UsersService} from './users.service';
 import {ReqValidationPipe} from '../common/pipe';
 import {LoginUsersDto, CreateUsersDto } from './dto';
@@ -10,13 +10,13 @@ export class AuthController {
 
     @Post('login')
     @UsePipes(new ReqValidationPipe(loginUserSchema))
-    login(loginUsersDto: LoginUsersDto) {
+    login(@Body() loginUsersDto: LoginUsersDto) {
         return this.usersService.loginUser(loginUsersDto);
     }
 
     @Post('signup')
     @UsePipes(new ReqValidationPipe(createUserSchema))
-    signup(createUsersDto: CreateUsersDto) {
+    signup(@Body() createUsersDto: CreateUsersDto) {
         return this.usersService.createUser(createUsersDto);
     }
 }

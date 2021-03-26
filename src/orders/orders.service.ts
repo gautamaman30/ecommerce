@@ -82,7 +82,9 @@ export class OrdersService {
                 
                 const seller = await manager.findOne(Sellers, {sellers_id: product.sellers_id});
                 const seller_wallet = await manager.findOne(Wallets, {username: seller.username});
-                seller_wallet.balance += total_amount;
+                console.log(seller_wallet);
+                seller_wallet.balance =  total_amount + seller_wallet.balance;
+                console.log(seller_wallet);
 
                 await manager.save(Wallets, buyer_wallet);
                 await manager.save(Wallets, seller_wallet);
@@ -90,6 +92,8 @@ export class OrdersService {
                 await manager.insert(Payments, {
                     payment_id, 
                     amount: total_amount, 
+                    buyers_id: createOrdersDto.customer_id,
+                    sellers_id: product.sellers_id,
                     paid_from: buyer_wallet.wallet_id, 
                     paid_to: seller_wallet.wallet_id
                 });
@@ -114,23 +118,23 @@ export class OrdersService {
         }
     }
 
-    async deleteOrders(order_id: string) {
+    async deleteOrders(order_id) {
         try {
             const result = await this.connection.transaction(async manager => {
-                const order = await manager.findOne(Orders, {order_id});
+                const order = await manager.findOne(Orders, order_id);
                 if(!order) return new HttpException(Errors.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND);
                 
                 const payment = await manager.findOne(Payments, {payment_id: order.payment_id});
                 
                 let buyer = await manager.findOne(Wallets, {wallet_id: payment.paid_from});
-                buyer.balance += payment.amount;
+                buyer.balance = Number(payment.amount) + Number(buyer.balance);
                 await manager.save(Wallets, buyer);
                 
                 let seller = await manager.findOne(Wallets, {wallet_id: payment.paid_to});
                 seller.balance -= payment.amount;
                 await manager.save(Wallets, seller);
 
-                return manager.delete(Orders, {order_id});
+                return manager.delete(Orders, order_id);
             });
 
             if(result instanceof HttpException) {

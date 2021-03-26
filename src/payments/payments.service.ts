@@ -37,6 +37,9 @@ export class PaymentsService {
     async findPaymentsByUser(dto: GetSellersPaymentsDto | GetBuyersPaymentsDto) {
         try {
             const payments = await this.paymentsRepository.find(dto);
+            if(payments.length === 0) {
+                return new HttpException(Errors.PAYMENT_NOT_FOUND, HttpStatus.NOT_FOUND);
+            }
             return payments;
         } catch(err) {
             console.log(err.message);
@@ -46,7 +49,7 @@ export class PaymentsService {
 
     async deletePayments(payment_id: string) {
         try {
-            const result = await this.paymentsRepository.delete({payment_id});
+            const result = await this.paymentsRepository.delete(payment_id);
             if(result.affected === 0) {
                 return new HttpException(Errors.PAYMENT_NOT_FOUND, HttpStatus.NOT_FOUND);
             }

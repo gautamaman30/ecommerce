@@ -13,7 +13,7 @@ export const Errors =  Object.freeze({
     PRODUCT_NOT_FOUND_CATEGORY: 'Product not found',
     PRODUCT_NOT_FOUND_SELLERS_ID: 'Product for this seller not found',
     PRODUCT_UPDATE_FIELDS_REQUIRED: 'Product update fields are required',
-    PRODUCT_QUANTITY_NOT_AVAILABLE: 'This much product quantity not available',
+    PRODUCT_QUANTITY_NOT_AVAILABLE: 'This much quantity of the product is not available',
 
     CATEGORY_NOT_FOUND: 'Category with this name not found',
     CATEGORY_UPDATE_FIELDS_REQUIRED: 'Category update fields are required',

@@ -21,6 +21,12 @@ export class ProductsController {
         return this.productsService.findAllProducts();
     }
 
+    @Get('sellers')
+    @Roles(Role.Sellers)
+    findProductsBySellers(@Req() req) {
+        return this.productsService.findProductsBySellers(req.user.seller_id);
+    }
+
     @Get(':product_id')
     @Roles(Role.Admin, Role.Buyers, Role.Sellers)
     @UsePipes(new ReqValidationPipe(getProductsByIdSchema))
@@ -28,17 +34,11 @@ export class ProductsController {
         return this.productsService.findProductsById(product_id);
     }
 
-    @Get(':product_category')
+    @Get('category/:product_category')
     @Roles(Role.Admin, Role.Buyers, Role.Sellers)
     @UsePipes(new ReqValidationPipe(getProductsByCategorySchema))
     findProductsByCategory(@Param() product_category: string) {
         return this.productsService.findProductsByCategory(product_category);
-    }
-
-    @Get('sellers')
-    @Roles(Role.Sellers)
-    findProductsBySellers(@Req() req) {
-        return this.productsService.findProductsBySellers(req.user.seller_id);
     }
 
     @Get('sellers/:sellers_id')

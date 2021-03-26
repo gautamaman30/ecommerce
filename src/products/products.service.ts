@@ -23,7 +23,7 @@ export class ProductsService {
 
     async findProductsById(product_id: string) {
         try {
-            const product = await this.productsRepository.findOne({product_id});
+            const product = await this.productsRepository.findOne(product_id);
             if(!product) {
                 return new HttpException(Errors.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
             }
@@ -34,9 +34,9 @@ export class ProductsService {
         }
     }
 
-    async findProductsByCategory(product_category: string) {
+    async findProductsByCategory(product_category) {
         try {
-            const products = await this.productsRepository.find({product_category});
+            const products = await this.productsRepository.find(product_category);
             if(products.length === 0) {
                 return new HttpException(Errors.PRODUCT_NOT_FOUND_CATEGORY, HttpStatus.NOT_FOUND);
             }
@@ -47,9 +47,9 @@ export class ProductsService {
         }
     }
 
-    async findProductsBySellers(sellers_id: string) {
+    async findProductsBySellers(sellers_id) {
         try {
-            const products = await this.productsRepository.find({sellers_id});
+            const products = await this.productsRepository.find(sellers_id);
             if(products.length === 0) {
                 return new HttpException(Errors.PRODUCT_NOT_FOUND_SELLERS_ID, HttpStatus.NOT_FOUND);
             }
@@ -62,7 +62,7 @@ export class ProductsService {
 
     async createProducts(createProductsDto: CreateProductsDto) {
         try {
-            const product_id = helperFunctions.generateRandomIdNumbers();
+            createProductsDto.product_id = helperFunctions.generateRandomIdNumbers();
 
             const result = await this.connection.transaction(async manager => {
                 const category = await manager.findOne(Category, {category_name: createProductsDto.product_category});
@@ -75,7 +75,7 @@ export class ProductsService {
             if(result instanceof HttpException) {
                 return result;
             }
-            return {message: Messages.PRODUCT_CREATED_SUCCESSFULLY, product_id};
+            return {message: Messages.PRODUCT_CREATED_SUCCESSFULLY, createProductsDto};
         } catch(err) {
             console.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -97,10 +97,12 @@ export class ProductsService {
 
     async updateProducts(updateProductsDto: UpdateProductsDto) {
         try {
-            let filter, updateDoc;
+            let filter: any = {};
             filter.product_id = updateProductsDto.product_id;
             filter.sellers_id = updateProductsDto.sellers_id;
-
+            
+            let updateDoc: any = {};
+            
             if(updateProductsDto.name) updateDoc.name = updateProductsDto.name; 
             if(updateProductsDto.description) updateDoc.description = updateProductsDto.description; 
             if(updateProductsDto.brand_name) updateDoc.brand_name = updateProductsDto.brand_name; 

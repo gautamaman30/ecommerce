@@ -31,10 +31,10 @@ export class Payments {
     time;
 
     @Column()
-    paid_from: number;
+    paid_from: string;
 
     @Column()
-    paid_to: number;
+    paid_to: string;
 
     @ManyToOne(type => Wallets)
     @JoinColumn({

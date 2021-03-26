@@ -57,6 +57,7 @@ export class UsersService {
             const result = await this.connection.transaction(async manager => {
                 await manager.insert(Users, createUsersDto);
                 await manager.insert(Wallets, { 
+                    wallet_id: helperFunctions.generateRandomIdNumbers(),
                     username: createUsersDto.username,
                     balance: 100000.00
                 })
@@ -91,11 +92,11 @@ export class UsersService {
         }
     }
 
-    async deleteUser(username: string) {
+    async deleteUser(username) {
         try {
             const result = await this.connection.transaction(async manager => {
-                const user = await manager.delete(Users, {username});
-                await manager.delete(Wallets, {username});
+                const user = await manager.delete(Users, username);
+                await manager.delete(Wallets, username);
                 return user;
             });
 

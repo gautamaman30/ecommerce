@@ -21,19 +21,19 @@ export class PaymentsController {
         return this.paymentsService.findAllPayments();
     }
 
-    @Get(':payment_id')
-    @Roles(Role.Admin)
-    @UsePipes(new ReqValidationPipe(getPaymentsByIdSchema))
-    findPaymentsById(@Param() getPaymentsByIdDto: GetPaymentsByIdDto) {
-        return this.paymentsService.findPaymentsById(getPaymentsByIdDto);
-    }
-
     @Get('buyers')
     @Roles(Role.Buyers)
     findBuyersPayments(@Req() req) {
         let getBuyersPaymentsDto = new GetBuyersPaymentsDto();
         getBuyersPaymentsDto.buyers_id = req.user.username;
         return this.paymentsService.findPaymentsByUser(getBuyersPaymentsDto);
+    }
+
+    @Get(':payment_id')
+    @Roles(Role.Admin)
+    @UsePipes(new ReqValidationPipe(getPaymentsByIdSchema))
+    findPaymentsById(@Param() getPaymentsByIdDto: GetPaymentsByIdDto) {
+        return this.paymentsService.findPaymentsById(getPaymentsByIdDto);
     }
 
     @Get('buyers/:payment_id')

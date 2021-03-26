@@ -18,10 +18,10 @@ export class SellersService {
     async createSellersAccount(username: string) {
         try {
             const sellers_id = helperFunctions.generateRandomId();
-                
+            const balance: number = 0.00;
             const seller =  await this.connection.transaction(async manager => {
                 await manager.insert(Sellers, {sellers_id, username});
-                await manager.update(Wallets, { username}, {balance: 0.00});
+                await manager.update(Wallets, { username}, {balance});
             });
             return {message: Messages.SELLER_CREATED_SUCCESSFULLY, sellers_id, username};
         } catch(err) {
@@ -73,7 +73,7 @@ export class SellersService {
             const seller = await this.sellersRepository
                 .createQueryBuilder("sellers")
                 .innerJoinAndSelect('users', 'users', 'users.username = sellers.username')
-                .where('sellers.username := username', {username})
+                .where('sellers.username = :username', {username})
                 .getOne();
             if(!seller) {
                 return new HttpException(Errors.SELLER_NOT_FOUND_USERNAME, HttpStatus.NOT_FOUND);
@@ -87,11 +87,7 @@ export class SellersService {
 
     async findSellersById(sellers_id: string) {
         try {
-            const seller = await this.sellersRepository
-                .createQueryBuilder("sellers")
-                .innerJoinAndSelect('users', 'users', 'users.username = sellers.username')
-                .where('sellers.seller_id := sellers_id', {sellers_id})
-                .getOne();
+            const seller = await this.sellersRepository.findOne(sellers_id);
             if(!seller) {
                 return new HttpException(Errors.SELLER_NOT_FOUND, HttpStatus.NOT_FOUND);
             }

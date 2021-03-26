@@ -22,7 +22,7 @@ export class CategoryService {
 
     async findCategoryByName(category_name: string) {
         try {
-            const category = await this.categoryRepository.findOne({category_name});
+            const category = await this.categoryRepository.findOne(category_name);
             if(!category) {
                 return new HttpException(Errors.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
             }
@@ -61,14 +61,13 @@ export class CategoryService {
 
     async updateCategory(updateCategoryDto: UpdateCategoryDto) {
         try {
-            let filter, updateDoc;
-            filter.category_name = updateCategoryDto.category_name;
-
+            let updateDoc: any = {};
+            
             if(updateCategoryDto.description) updateDoc.description = updateCategoryDto.description; 
 
             if(Object.keys(updateDoc).length === 0) return new HttpException(Errors.CATEGORY_UPDATE_FIELDS_REQUIRED, HttpStatus.BAD_REQUEST);
 
-            const result = await this.categoryRepository.update(filter, updateDoc);
+            const result = await this.categoryRepository.update({category_name: updateCategoryDto.category_name}, updateDoc);
             if(result.affected === 0) {
                 return new HttpException(Errors.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
             }

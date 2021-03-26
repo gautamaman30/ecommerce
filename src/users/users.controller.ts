@@ -20,17 +20,17 @@ export class UsersController {
         return this.usersService.findUser(req.user.username);
     }
     
+    @Get('all')
+    @Roles(Role.Admin)
+    findAllUsers() {
+        return this.usersService.findAllUsers();
+    }
+    
     @Get(':username')
     @Roles(Role.Admin)
     @UsePipes(new ReqValidationPipe(getUsersByUsernameSchema))
     findUserByUsername(@Param() username: string) {
         return this.usersService.findUser(username);
-    }
-    
-    @Get('all')
-    @Roles(Role.Admin)
-    findAllUsers() {
-        return this.usersService.findAllUsers();
     } 
     
     @Delete()

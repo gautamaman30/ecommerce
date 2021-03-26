@@ -1,10 +1,12 @@
-import {Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn} from 'typeorm';
+import {Entity, Column, PrimaryColumn, OneToOne, JoinColumn} from 'typeorm';
 import { Users } from 'src/users/entity';
 
 @Entity()
 export class Wallets {
-    @PrimaryGeneratedColumn('increment')
-    wallet_id: number;
+    @PrimaryColumn({
+        length: 100
+    })
+    wallet_id: string;
 
     @Column({
         length: 100,

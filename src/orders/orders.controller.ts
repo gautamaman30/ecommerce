@@ -20,6 +20,12 @@ export class OrdersController {
         return this.ordersService.findUsersOrders(req.user.username);
     }
 
+    @Get('all')
+    @Roles(Role.Admin)
+    findAllOrders() {
+        return this.ordersService.findAllOrders();
+    }
+
     @Get(':order_id')
     @Roles(Role.Buyers)
     @UsePipes(new ReqValidationPipe(getOrdersByIdSchema))
@@ -36,10 +42,11 @@ export class OrdersController {
         return this.ordersService.findOrdersByProductsId(getOrdersByProductsIdDto);
     }
 
-    @Get('all')
+    @Get('all/products/:product_id')
     @Roles(Role.Admin)
-    findAllOrders() {
-        return this.ordersService.findAllOrders();
+    @UsePipes(new ReqValidationPipe(getOrdersByProductIdSchema))
+    findOrdersByProductsId(@Param() getOrdersByProductsIdDto: GetOrdersByProductsIdDto) {
+        return this.ordersService.findOrdersByProductsId(getOrdersByProductsIdDto);
     }
     
     @Get('all/:order_id')
@@ -47,13 +54,6 @@ export class OrdersController {
     @UsePipes(new ReqValidationPipe(getOrdersByIdSchema))
     findOrdersById(@Param() getOrdersByIdDto: GetOrdersByIdDto) {
         return this.ordersService.findOrdersById(getOrdersByIdDto);
-    }
-
-    @Get('all/products/:product_id')
-    @Roles(Role.Admin)
-    @UsePipes(new ReqValidationPipe(getOrdersByProductIdSchema))
-    findOrdersByProductsId(@Param() getOrdersByProductsIdDto: GetOrdersByProductsIdDto) {
-        return this.ordersService.findOrdersByProductsId(getOrdersByProductsIdDto);
     } 
 
     @Post('product')

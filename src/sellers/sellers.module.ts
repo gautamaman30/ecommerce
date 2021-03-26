@@ -11,7 +11,7 @@ import { UsersModule } from '../users/users.module';
     imports: [TypeOrmModule.forFeature([Sellers]), UsersModule, WalletsModule],
     controllers: [SellersController],
     providers: [SellersService],
-    exports: [TypeOrmModule]
+    exports: [TypeOrmModule, SellersService]
 })
 export class SellersModule {
 }

@@ -20,11 +20,11 @@ export class CategoryController {
         return this.categoryService.findAllCategory();
     }
 
-    @Get(':name')
+    @Get(':category_name')
     @Roles(Role.Admin, Role.Buyers, Role.Sellers)
     @UsePipes(new ReqValidationPipe(getCategorySchema))
-    findCategoryByName(@Param() name: string) {
-        return this.categoryService.findCategoryByName(name);
+    findCategoryByName(@Param() category_name: string) {
+        return this.categoryService.findCategoryByName(category_name);
     }
 
     @Post()

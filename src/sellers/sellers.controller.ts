@@ -37,18 +37,18 @@ export class SellersController {
     @Roles(Role.Sellers)
     findSeller(@Req() req) {
         return this.sellersService.findSellersByUsername(req.user.username);
-    }
-
-    @Get(':id')
-    @Roles(Role.Admin, Role.Buyers, Role.Sellers)
-    @UsePipes(new ReqValidationPipe(getSellerSchema)) 
-    findSellersById(@Param() id: string) {
-        return this.sellersService.findSellersById(id);
-    }
+    }   
 
     @Get('all')
     @Roles(Role.Admin, Role.Buyers, Role.Sellers)
     findAllSellers() {
         return this.sellersService.findAllSellers();
+    }
+
+    @Get(':sellers_id')
+    @Roles(Role.Admin, Role.Buyers, Role.Sellers)
+    @UsePipes(new ReqValidationPipe(getSellerSchema)) 
+    findSellersById(@Param() sellers_id: string) {
+        return this.sellersService.findSellersById(sellers_id);
     }
 }
