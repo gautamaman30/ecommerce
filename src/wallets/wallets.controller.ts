@@ -1,5 +1,6 @@
 import { Controller, UseGuards, UsePipes, Get, Post, Delete, Put, Body, Param, Query, Req } from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
+
 import {WalletsService} from './wallets.service';
 import {Role} from '../common/enums';
 import {Roles} from '../common/customDecorators';

@@ -37,6 +37,15 @@ export class HelperFunctions{
         return id;
     }
 
+    generateRandomIdNumbers() {
+        const str = '1234567890';
+        let id = '';
+        while(id.length < 8) {
+            id += str[Math.floor(Math.random()*10)];
+        }
+        return id;
+    }
+
     signToken(payload) {
         const signOptions: any = {
             issuer: configObj.JWT_TOKEN_ISSUER,

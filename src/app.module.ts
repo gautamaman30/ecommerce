@@ -1,27 +1,37 @@
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {Users, Sellers} from './users/entity';
-import {Wallets} from './wallets/entity';
-import {Products, Category} from './products/entity';
+
+import { Users} from './users/entity';
+import { Sellers} from './sellers/entity';
+import { Wallets} from './wallets/entity';
+import { Products, Category} from './products/entity';
+import { Payments} from './payments/entity';
+import { Orders} from './orders/entity'; 
 import { UsersModule } from './users/users.module';
+import { SellersModule} from './sellers/sellers.module'; 
 import { WalletsModule } from './wallets/wallets.module';
-import {LoggerMiddleware, LowercaseReqKeysMiddleware} from './common/middleware';
-import {configObj} from './common/configEnv';
+import { PaymentsModule} from './payments/payments.module'; 
+import { OrdersModule} from './orders/orders.module';
+import { ProductsModule} from './products/products.module';
+import { LoggerMiddleware, LowercaseReqKeysMiddleware} from './common/middleware';
+import { configObj} from './common/configEnv';
 import { JwtStrategy } from './common/strategy';
 
 @Module({
-    imports: [UsersModule, WalletsModule, TypeOrmModule.forRootAsync({
-        useFactory: () => ({
-            type: <any>configObj.DB_TYPE,
-            host: configObj.DB_HOST,
-            port: configObj.DB_PORT,
-            username: configObj.DB_USERNAME,
-            password: configObj.DB_PASSWORD,
-            database: configObj.DB_DATABASE,
-            entities: [Users, Sellers, Wallets, Category, Products],
-//            synchronize: true,
-            logging: true  
-        })
+    imports: [UsersModule, WalletsModule, PaymentsModule, 
+        OrdersModule, ProductsModule, SellersModule, 
+        TypeOrmModule.forRootAsync({
+            useFactory: () => ({
+                type: <any>configObj.DB_TYPE,
+                host: configObj.DB_HOST,
+                port: configObj.DB_PORT,
+                username: configObj.DB_USERNAME,
+                password: configObj.DB_PASSWORD,
+                database: configObj.DB_DATABASE,
+                entities: [Users, Sellers, Wallets, Category, Products, Payments, Orders],
+                synchronize: true,
+                logging: true  
+            })
     })],
     controllers: [],
     providers: [JwtStrategy],
@@ -29,8 +39,18 @@ import { JwtStrategy } from './common/strategy';
 export class AppModule implements NestModule{
     configure(consumer: MiddlewareConsumer) {
         consumer.apply(LowercaseReqKeysMiddleware)
-            .forRoutes({ path: 'user', method: RequestMethod.ALL});
+            .forRoutes({ path: 'users', method: RequestMethod.ALL}, 
+                { path: 'sellers', method: RequestMethod.ALL},
+                { path: 'products', method: RequestMethod.ALL},
+                { path: 'wallets', method: RequestMethod.ALL},
+                { path: 'payments', method: RequestMethod.ALL},
+                { path: 'orders', method: RequestMethod.ALL});
         consumer.apply(LoggerMiddleware)
-            .forRoutes({path: 'user', method: RequestMethod.ALL});        
+            .forRoutes({ path: 'users', method: RequestMethod.ALL}, 
+            { path: 'sellers', method: RequestMethod.ALL},
+            { path: 'products', method: RequestMethod.ALL},
+            { path: 'wallets', method: RequestMethod.ALL},
+            { path: 'payments', method: RequestMethod.ALL},
+            { path: 'orders', method: RequestMethod.ALL});
     }
 }

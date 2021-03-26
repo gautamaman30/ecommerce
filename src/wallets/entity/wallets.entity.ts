@@ -28,6 +28,7 @@ export class Wallets {
 
     @Column({
         type: 'date',
+        default: () => 'CURRENT_DATE',
         nullable: true
     })
     last_updated;

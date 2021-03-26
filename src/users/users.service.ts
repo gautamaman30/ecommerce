@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueryFailedError, Repository, Connection } from 'typeorm';
+
 import { Users } from "./entity";
 import { Wallets } from '../wallets/entity';
 import { GetUsersDto, UpdateUsersDto, CreateUsersDto, LoginUsersDto } from "./dto/index";
@@ -92,7 +93,12 @@ export class UsersService {
 
     async deleteUser(username: string) {
         try {
-            const result = await this.usersRepository.delete(username);
+            const result = await this.connection.transaction(async manager => {
+                const user = await manager.delete(Users, {username});
+                await manager.delete(Wallets, {username});
+                return user;
+            });
+
             if(result.affected === 0) {
                 return new HttpException(Errors.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
             }

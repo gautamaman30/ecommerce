@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn, JoinColumn, ManyToOne} from "typeorm"
-import {Sellers} from '../../users/entity';
+import {Sellers} from '../../sellers/entity';
 import {Category} from './category.entity';
 
 @Entity()
@@ -38,7 +38,7 @@ export class Products {
         scale: 2,
         default: 0.00
     })
-    price;
+    price: number;
 
     @Column({
         default: 1

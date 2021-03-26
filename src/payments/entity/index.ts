@@ -1,3 +1,3 @@
-import {Wallets} from './wallets.entity';
+import {Payments} from './payments.entity';
 
-export {Wallets};
+export {Payments};

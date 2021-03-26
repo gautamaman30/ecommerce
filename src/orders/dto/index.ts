@@ -1,6 +1,5 @@
-import { CreateUsersDto } from "./createUsers.dto";
-import { GetUsersDto } from "./getUsers.dto";
-import { UpdateUsersDto } from "./updateUsers.dto";
-import { LoginUsersDto } from './loginUsers.dto';
+import { GetOrdersByIdDto } from "./getOrdersById.dto";
+import { GetOrdersByProductsIdDto } from "./getOrdersByProductsId.dto";
+import { CreateOrdersDto } from './createOrders.dto';
 
-export {CreateUsersDto, GetUsersDto, UpdateUsersDto, LoginUsersDto};
+export {GetOrdersByIdDto, GetOrdersByProductsIdDto, CreateOrdersDto};

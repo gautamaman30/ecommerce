@@ -5,7 +5,7 @@ import {UsersService} from './users.service';
 import {ReqValidationPipe} from '../common/pipe';
 import {RolesGuard} from '../common/guards';
 import {Roles} from '../common/customDecorators';
-import {Role} from '../common/enums';
+import {Role} from '../common/enums';  
 import {UpdateUsersDto } from './dto';
 import {updateUserSchema, getUsersByUsernameSchema, deleteUsersSchema} from './validationSchema';
 

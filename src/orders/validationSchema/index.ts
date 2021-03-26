@@ -1,7 +1,6 @@
-import { createUserSchema } from './createUsersValidation.schema';
-import { getUsersByUsernameSchema } from './getUsersByUsernameValidation.schema';
-import { updateUserSchema } from './updateUserValidation.schema';
-import { deleteUsersSchema } from './deleteUsersValidation.schema';
-import { loginUserSchema} from './loginUsersValidation.schema';
+import { createOrdersSchema} from './createOrdersValidation.schema';
+import { deleteOrdersSchema} from './deleteOrdersValidation.schema';
+import { getOrdersByIdSchema} from './getOrdersByIdValidation.schema';
+import { getOrdersByProductIdSchema} from './getOrdersByProductIdValidation.schema';
 
-export { createUserSchema, getUsersByUsernameSchema, updateUserSchema, deleteUsersSchema, loginUserSchema};
+export { createOrdersSchema, deleteOrdersSchema, getOrdersByIdSchema, getOrdersByProductIdSchema}; 
