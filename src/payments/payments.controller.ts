@@ -16,32 +16,17 @@ export class PaymentsController {
     constructor(private paymentsService: PaymentsService) {}
 
     @Get('')
-    @Roles(Role.Admin)
-    findAllPayments(@Req() req) {
-        return this.paymentsService.findAllPayments();
-    }
-
-    @Get('buyers')
     @Roles(Role.Buyers)
     findBuyersPayments(@Req() req) {
         let getBuyersPaymentsDto = new GetBuyersPaymentsDto();
         getBuyersPaymentsDto.buyers_id = req.user.username;
         return this.paymentsService.findPaymentsByUser(getBuyersPaymentsDto);
     }
-
-    @Get(':payment_id')
+    
+    @Get('all')
     @Roles(Role.Admin)
-    @UsePipes(new ReqValidationPipe(getPaymentsByIdSchema))
-    findPaymentsById(@Param() getPaymentsByIdDto: GetPaymentsByIdDto) {
-        return this.paymentsService.findPaymentsById(getPaymentsByIdDto);
-    }
-
-    @Get('buyers/:payment_id')
-    @Roles(Role.Buyers)
-    @UsePipes(new ReqValidationPipe(getPaymentsByIdSchema))
-    findBuyersPaymentsById(@Param() getBuyersPaymentsByIdDto: GetBuyersPaymentsByIdDto, @Req() req) {
-        getBuyersPaymentsByIdDto.buyers_id = req.user.username;
-        return this.paymentsService.findPaymentsById(getBuyersPaymentsByIdDto);
+    findAllPayments(@Req() req) {
+        return this.paymentsService.findAllPayments();
     }
 
     @Get('sellers')
@@ -50,6 +35,21 @@ export class PaymentsController {
         let getSellersPaymentsDto = new GetSellersPaymentsDto();
         getSellersPaymentsDto.sellers_id = req.user.sellers_id;
         return this.paymentsService.findPaymentsByUser(getSellersPaymentsDto);
+    }
+
+    @Get('all/:payment_id')
+    @Roles(Role.Admin)
+    @UsePipes(new ReqValidationPipe(getPaymentsByIdSchema))
+    findPaymentsById(@Param() getPaymentsByIdDto: GetPaymentsByIdDto) {
+        return this.paymentsService.findPaymentsById(getPaymentsByIdDto);
+    }
+
+    @Get(':payment_id')
+    @Roles(Role.Buyers)
+    @UsePipes(new ReqValidationPipe(getPaymentsByIdSchema))
+    findBuyersPaymentsById(@Param() getBuyersPaymentsByIdDto: GetBuyersPaymentsByIdDto, @Req() req) {
+        getBuyersPaymentsByIdDto.buyers_id = req.user.username;
+        return this.paymentsService.findPaymentsById(getBuyersPaymentsByIdDto);
     }
 
     @Get('sellers/:payment_id')

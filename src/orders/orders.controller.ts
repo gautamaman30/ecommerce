@@ -20,6 +20,12 @@ export class OrdersController {
         return this.ordersService.findUsersOrders(req.user.username);
     }
 
+    @Get('sellers')
+    @Roles(Role.Sellers)
+    findSellersOrders(@Req() req) {
+        return this.ordersService.findSellersOrders(req.user.sellers_id);
+    }
+
     @Get('all')
     @Roles(Role.Admin)
     findAllOrders() {

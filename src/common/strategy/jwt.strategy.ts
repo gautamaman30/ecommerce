@@ -27,7 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         if (user instanceof HttpException) {
             throw new UnauthorizedException();
         }
-        
         if(user.roles === 'sellers') {
             const seller = await this.sellersService.findSellersByUsername(username);
             if(seller instanceof HttpException) {

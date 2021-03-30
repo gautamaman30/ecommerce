@@ -28,6 +28,20 @@ export class OrdersService {
         }
     }
 
+    async findSellersOrders(sellers_id: string) {
+        try {
+            const orders = await this.ordersRepository
+                .createQueryBuilder("orders")
+                .innerJoinAndSelect("products", "products", "products.product_id = orders.product_id")
+                .where("products.sellers_id = :sellers_id", {sellers_id})
+                .getMany();
+            return orders;
+        } catch(err) {
+            this.logger.log(err.message);
+            return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     async findAllOrders() {
         try {
             const orders = await this.ordersRepository.find();
@@ -67,28 +81,32 @@ export class OrdersService {
             const order_id = helperFunctions.generateRandomId();
             
             const result = await this.connection.transaction(async manager => {
+
                 const product = await manager.findOne(Products, {product_id: createOrdersDto.product_id});
+                
                 if(!product) return new HttpException(Errors.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
 
                 if(createOrdersDto.quantity > product.quantity) {
                     return new HttpException(Errors.PRODUCT_QUANTITY_NOT_AVAILABLE, HttpStatus.BAD_REQUEST);
                 }
 
+                
                 const total_amount = product.price * createOrdersDto.quantity;
-
                 const buyer_wallet = await manager.findOne(Wallets, {username: createOrdersDto.customer_id});
                 if(buyer_wallet.balance < total_amount) {
                     return new HttpException(Errors.INSUFFICIENT_WALLET_BALANCE, HttpStatus.BAD_REQUEST);
                 }
-
                 buyer_wallet.balance -= total_amount; 
                 
                 const seller = await manager.findOne(Sellers, {sellers_id: product.sellers_id});
                 const seller_wallet = await manager.findOne(Wallets, {username: seller.username});
-                seller_wallet.balance =  total_amount + seller_wallet.balance;
-                
+                seller_wallet.balance =  Number(total_amount) + Number(seller_wallet.balance);
+
+                product.quantity -= createOrdersDto.quantity;    
+
                 await manager.save(Wallets, buyer_wallet);
                 await manager.save(Wallets, seller_wallet);
+                await manager.save(Products, product);
                 
                 await manager.insert(Payments, {
                     payment_id, 
@@ -134,6 +152,8 @@ export class OrdersService {
                 let seller = await manager.findOne(Wallets, {wallet_id: payment.paid_to});
                 seller.balance -= payment.amount;
                 await manager.save(Wallets, seller);
+
+                await manager.update(Products, {product_id: order.product_id}, {quantity: () => `quantity + ${order.quantity}`})
 
                 return manager.delete(Orders, order_id);
             });

@@ -5,9 +5,9 @@ import {sign, Secret} from 'jsonwebtoken';
 import {Errors} from "./index";
 import {configObj} from '../configEnv';
 
-export class HelperFunctions{
+const logger = new Logger('HelperFunctions');
 
-    private readonly logger = new Logger('HelperFunctions');
+export class HelperFunctions{
 
     async hashPassword(password: string){
         try{
@@ -15,7 +15,7 @@ export class HelperFunctions{
             const hashedPassword = await hash(password, saltRounds);
             if(hashedPassword) return hashedPassword;
         } catch(err){
-            this.logger.log(err.message);
+            logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -26,7 +26,7 @@ export class HelperFunctions{
             if(result) return true;
             else return false;
         } catch(err){
-            this.logger.log(err.message);
+            logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -58,11 +58,11 @@ export class HelperFunctions{
         return new Promise((resolve, reject) => {
             sign(payload, <Secret>configObj.SECRET_KEY , signOptions , function(err, token) {
                 if(err){
-                    this.logger.log(err.message);
+                    logger.log(err.message);
                     reject(Errors.INTERNAL_ERROR);
                 }
                 if(token){
-                    this.logger.log(token);
+                    logger.log(token);
                     resolve(token);
                 }
             });

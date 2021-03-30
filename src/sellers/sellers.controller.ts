@@ -13,7 +13,7 @@ import {verifySellersAccountSchema, deleteSellersAccountSchema, getSellerSchema}
 export class SellersController {
     constructor(private sellersService: SellersService) {}
 
-    @Post('account')
+    @Post('account/apply')
     @Roles(Role.Buyers)
     createSellersAccount(@Req() req) {
         return this.sellersService.createSellersAccount(req.user.username);
