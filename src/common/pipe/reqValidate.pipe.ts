@@ -7,8 +7,9 @@ export class ReqValidationPipe implements PipeTransform {
     
     constructor(private schema) {}
 
-    async transform(value: any) {
+    async transform(value) {
         try { 
+            console.log(value);
             const result = await this.schema.validate(value);
             return result;
         } catch(err) {

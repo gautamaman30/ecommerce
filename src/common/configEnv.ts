@@ -17,7 +17,11 @@ const configObj = {
     DB_PORT: Number(process.env.DB_PORT),
     DB_USERNAME: process.env.DB_USERNAME,
     DB_PASSWORD: process.env.DB_PASSWORD,
-    DB_DATABASE: process.env.DB_DATABASE
+    DB_DATABASE: process.env.DB_DATABASE,
+    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+    AWS_REGION: process.env.AWS_REGION,
+    AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME
 }
 
 export {configObj};

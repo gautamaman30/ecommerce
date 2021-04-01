@@ -22,6 +22,8 @@ export const Errors =  Object.freeze({
     ORDER_NOT_FOUND: 'Order with this id not found',
 
     PAYMENT_NOT_FOUND: 'Payment with this id not found',
+
+    INVOICE_NOT_FOUND: 'Invoice not found',
     
     INTERNAL_ERROR: 'Internal server error',
     AUTHORIZATION_FAILED: 'Authorization failed',

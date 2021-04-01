@@ -16,10 +16,12 @@ import { ProductsModule} from './products/products.module';
 import { LoggerMiddleware, LowercaseReqKeysMiddleware} from './common/middleware';
 import { configObj} from './common/configEnv';
 import { JwtStrategy } from './common/strategy';
+import { InvoicesModule } from './invoices/invoices.module';
+import { Invoices } from './invoices/entity';
 
 @Module({
     imports: [UsersModule, WalletsModule, PaymentsModule, 
-        OrdersModule, ProductsModule, SellersModule, 
+        OrdersModule, ProductsModule, SellersModule, InvoicesModule,
         TypeOrmModule.forRootAsync({
             useFactory: () => ({
                 type: <any>configObj.DB_TYPE,
@@ -28,7 +30,7 @@ import { JwtStrategy } from './common/strategy';
                 username: configObj.DB_USERNAME,
                 password: configObj.DB_PASSWORD,
                 database: configObj.DB_DATABASE,
-                entities: [Users, Sellers, Wallets, Category, Products, Payments, Orders],
+                entities: [Users, Sellers, Wallets, Category, Products, Payments, Orders, Invoices],
                 synchronize: true,
                 logging: true  
             })
@@ -44,13 +46,15 @@ export class AppModule implements NestModule{
                 { path: 'products', method: RequestMethod.ALL},
                 { path: 'wallets', method: RequestMethod.ALL},
                 { path: 'payments', method: RequestMethod.ALL},
-                { path: 'orders', method: RequestMethod.ALL});
+                { path: 'orders', method: RequestMethod.ALL},
+                { path: 'invoices', method: RequestMethod.ALL});
         consumer.apply(LoggerMiddleware)
             .forRoutes({ path: 'users', method: RequestMethod.ALL}, 
             { path: 'sellers', method: RequestMethod.ALL},
             { path: 'products', method: RequestMethod.ALL},
             { path: 'wallets', method: RequestMethod.ALL},
             { path: 'payments', method: RequestMethod.ALL},
-            { path: 'orders', method: RequestMethod.ALL});
+            { path: 'orders', method: RequestMethod.ALL},
+            { path: 'invoices', method: RequestMethod.ALL});
     }
 }

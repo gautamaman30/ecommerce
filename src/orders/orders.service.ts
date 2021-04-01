@@ -7,6 +7,8 @@ import { Payments } from '../payments/entity';
 import { Wallets } from '../wallets/entity';
 import { Products } from '../products/entity';
 import { Sellers } from '../sellers/entity';
+import { Users } from 'src/users/entity';
+import { InvoicesService } from '../invoices/invoices.service';
 import {GetOrdersByProductsIdDto, GetOrdersByIdDto, CreateOrdersDto} from './dto';
 import {Errors, helperFunctions, Messages} from '../common/utils';
 
@@ -16,7 +18,7 @@ export class OrdersService {
     private readonly logger = new Logger('OrdersService');
 
     constructor(@InjectRepository(Orders) private ordersRepository: Repository<Orders>, 
-        private connection: Connection) {}
+        private connection: Connection, private invoicesService: InvoicesService) {}
 
     async findUsersOrders(customer_id: string) {
         try {
@@ -115,9 +117,9 @@ export class OrdersService {
                     sellers_id: product.sellers_id,
                     paid_from: buyer_wallet.wallet_id, 
                     paid_to: seller_wallet.wallet_id
-                });
+                }); 
 
-                return manager.insert(Orders, {
+                await manager.insert(Orders, {
                     order_id, 
                     product_id: product.product_id,
                     payment_id,
@@ -125,11 +127,37 @@ export class OrdersService {
                     quantity: createOrdersDto.quantity,
                     amount: total_amount
                 });
+
+                const user = await manager.findOne(Users, {username: createOrdersDto.customer_id});
+
+                return {
+                    customer_name: `${user.first_name} ${user.last_name}`,
+                    customer_email: `${user.email}`,
+                    sold_by: seller.username,
+                    unit_price: product.price,
+                    product_name: product.name,
+                    total_amount
+                };
             });
 
             if(result instanceof HttpException) {
                 return result;
             }
+
+
+            const invoice = await this.invoicesService.createInvoices({
+                order_id,
+                customer_id: createOrdersDto.customer_id,
+                customer_name: result.customer_name,
+                customer_email: result.customer_email,
+                sold_by: result.sold_by,
+                quantity: createOrdersDto.quantity,
+                unit_price: result.unit_price,
+                product_name: result.product_name,
+                payment_id,
+                total_amount: result.total_amount
+            });
+
             return {message: Messages.ORDER_CREATED_SUCCESSFULLY, order_id};
         } catch(err) {
             this.logger.log(err.message);
@@ -153,7 +181,7 @@ export class OrdersService {
                 seller.balance -= payment.amount;
                 await manager.save(Wallets, seller);
 
-                await manager.update(Products, {product_id: order.product_id}, {quantity: () => `quantity + ${order.quantity}`})
+                await manager.update(Products, {product_id: order.product_id}, {quantity: () => `quantity + ${order.quantity}`});
 
                 return manager.delete(Orders, order_id);
             });

@@ -87,7 +87,7 @@ export class UsersService {
                 return new HttpException(Errors.INCORRECT_PASSWORD, HttpStatus.BAD_REQUEST);
             }
             const token = await helperFunctions.signToken({username: loginUsersDto.username});
-            return {message: Messages.USER_LOGGED_IN_SUCCESSFULLY, token};
+            return {message: Messages.USER_LOGGED_IN_SUCCESSFULLY, token, statusCode: HttpStatus.OK};
         } catch(err) {
             this.logger.log(err.message);
             return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);

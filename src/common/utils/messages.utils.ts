@@ -19,4 +19,8 @@ export const Messages =  Object.freeze({
     ORDER_CREATED_SUCCESSFULLY: 'Order created successfully',
 
     PAYMENT_DELETED_SUCCESSFULLY: 'Payment deleted successfully',
+
+    INVOICE_CREATED_SUCCESSFULLY: 'Invoice created successfully',
+    INVOICE_GENERATED_SUCCESSFULLY: 'Invoice generated successfully',
+    INVOICE_DELETED_SUCCESSFULLY: 'Invoice deleted successfully'
 })
