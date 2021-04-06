@@ -1,3 +1,4 @@
+//sample comment
 import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, ManyToOne} from 'typeorm';
 
 import { Orders } from '../../orders/entity';
