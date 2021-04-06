@@ -7,7 +7,7 @@ import { RolesGuard} from '../common/guards';
 import { CategoryService} from './category.service';
 import { CreateCategoryDto, DeleteCategoryDto, UpdateCategoryDto} from './dto';
 import { getCategorySchema, postCategorySchema, deleteCategorySchema, updateCategorySchema} from './validationSchema'; 
-import { ReqValidationPipe } from 'src/common/pipe';
+import { ReqValidationPipe } from '../common/pipe';
 
 @Controller('category')
 @UseGuards(AuthGuard('jwt'), RolesGuard)

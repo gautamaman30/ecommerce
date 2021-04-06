@@ -86,7 +86,7 @@ export class InvoicesService {
                 .text(`Product name:   ${createInvoicesDto.product_name}`, 100, 300)
                 .text(`Sold by:   ${createInvoicesDto.sold_by}`, 100, 320)
                 .text(`Unit price:   ${createInvoicesDto.unit_price}`, 350, 340)
-                .text(`Quantity:   ${createInvoicesDto.unit_price}`, 350, 360);
+                .text(`Quantity:   ${createInvoicesDto.quantity}`, 350, 360);
 
             doc.font('Helvetica-Bold')
                 .fontSize(20)

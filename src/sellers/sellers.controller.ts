@@ -1,5 +1,6 @@
 import { Controller, UseGuards, UsePipes, Body, Param, Query, Req, Get, Delete, Put, Post } from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
+
 import {SellersService} from './sellers.service';
 import { RolesGuard } from '../common/guards';
 import {ReqValidationPipe} from '../common/pipe';

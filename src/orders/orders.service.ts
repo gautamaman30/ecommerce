@@ -7,7 +7,7 @@ import { Payments } from '../payments/entity';
 import { Wallets } from '../wallets/entity';
 import { Products } from '../products/entity';
 import { Sellers } from '../sellers/entity';
-import { Users } from 'src/users/entity';
+import { Users } from '../users/entity';
 import { InvoicesService } from '../invoices/invoices.service';
 import {GetOrdersByProductsIdDto, GetOrdersByIdDto, CreateOrdersDto} from './dto';
 import {Errors, helperFunctions, Messages} from '../common/utils';

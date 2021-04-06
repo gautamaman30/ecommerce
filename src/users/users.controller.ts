@@ -1,5 +1,8 @@
-import { Controller, Get, Delete, Put, UseGuards, UsePipes, Req, Body, Param } from '@nestjs/common';
-import {AuthGuard} from '@nestjs/passport';
+import { Controller, Get, Delete, Put, UseGuards, UsePipes, Req, Body, Param, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
+import { diskStorage } from 'multer';
 
 import {UsersService} from './users.service';
 import {ReqValidationPipe} from '../common/pipe';
@@ -7,6 +10,7 @@ import {RolesGuard} from '../common/guards';
 import {Roles} from '../common/customDecorators';
 import {Role} from '../common/enums';  
 import {UpdateUsersDto } from './dto';
+import { helperFunctions } from '../common/utils'; 
 import {updateUserSchema, getUsersByUsernameSchema, deleteUsersSchema} from './validationSchema';
 
 @Controller('users')
@@ -52,5 +56,18 @@ export class UsersController {
     updateUser(@Body() updateUsersDto: UpdateUsersDto, @Req() req) {
         updateUsersDto.username = req.user.username;
         return this.usersService.updateUser(updateUsersDto);
+    }
+
+    @Post('upload/avatar')
+    @Roles(Role.Buyers, Role.Sellers)
+    @UseInterceptors(FileInterceptor('avatar', { storage: diskStorage({
+            filename: helperFunctions.editFileName,
+            destination: './static'
+        }), fileFilter: helperFunctions.imageFilter,  limits: {
+            files: 1,
+            fileSize: 150000,
+    }}))
+    uploadAvatar(@UploadedFile() file: Express.Multer.File, @Req() req) {
+        return this.usersService.uploadAvatar(file, req.user.username);
     }
 }

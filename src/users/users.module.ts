@@ -5,7 +5,7 @@ import { Users} from './entity';
 import { UsersController } from './users.controller';
 import { AuthController } from './auth.controller';
 import { UsersService } from './users.service';
-import { WalletsModule } from 'src/wallets/wallets.module';
+import { WalletsModule } from '../wallets/wallets.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Users]), WalletsModule],

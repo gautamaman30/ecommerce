@@ -2,6 +2,7 @@ export const Errors =  Object.freeze({
     USER_NOT_FOUND: 'User with this username not found',
     USERNAME_ALREADY_EXISTS: 'User with this username already exists',
     USER_UPDATE_FIELDS_REQUIRED: 'User update fields are required',
+    AVATAR_NULL: 'Avatar file was null',
 
     SELLER_NOT_FOUND: 'Seller with this id not found',
     SELLER_NOT_FOUND_USERNAME: 'Seller with this username not found',

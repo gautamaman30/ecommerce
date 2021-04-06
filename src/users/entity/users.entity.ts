@@ -41,7 +41,7 @@ export class Users {
     roles: roles;
 
     @Column({
-        length: 300,
+        length: 500,
         nullable: true
     })
     avatar: string;

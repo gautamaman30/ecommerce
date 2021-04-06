@@ -1,6 +1,10 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueryFailedError, Repository, Connection } from 'typeorm';
+import { S3 } from 'aws-sdk';
+import { configObj } from '../common/configEnv';
+import { createReadStream, unlink} from 'fs';
+import { join } from 'path';
 
 import { Users } from "./entity";
 import { Wallets } from '../wallets/entity';
@@ -11,6 +15,14 @@ import { Errors, Messages, helperFunctions } from '../common/utils/index';
 export class UsersService {
 
     private readonly logger = new Logger('UsersService');
+
+    private s3 = new S3({
+        credentials: {
+        accessKeyId: configObj.AWS_ACCESS_KEY_ID,
+        secretAccessKey: configObj.AWS_SECRET_ACCESS_KEY
+        },
+        region: configObj.AWS_REGION
+    });
 
     constructor(@InjectRepository(Users) private usersRepository: Repository<Users>
         , private connection: Connection) {}
@@ -146,4 +158,61 @@ export class UsersService {
         }
     }
 
+    async uploadAvatar(file, username: string) {
+        try {       
+
+            if(!file) {
+                return new HttpException(Errors.AVATAR_NULL, HttpStatus.BAD_REQUEST);
+            }
+
+            const file_path = join(process.cwd(), 'static', file.filename);
+
+            const stream = createReadStream(join(process.cwd(), 'static', file.filename)); 
+            stream.on('error', (err) => {
+                this.logger.log(err.message);
+            });
+
+            const uploadParams = {
+                Bucket: configObj.AWS_BUCKET_NAME,
+                Key: file.filename,
+                Body: stream
+            };
+
+            this.s3.upload(uploadParams, (err, data) => {
+                if(err) {
+                    this.logger.log(err);
+                }
+                if(data) {
+                    this.logger.log(data);
+                }
+            }); 
+
+            const url: string = await new Promise((resolve, reject) => {
+                this.s3.getSignedUrl('getObject', {   
+                        Bucket: configObj.AWS_BUCKET_NAME, 
+                        Key: file.filename, 
+                        Expires: 432000     
+                    }, (err, url) => {
+                        if(err) this.logger.log(err);
+                        if(url) resolve(url);
+                    }
+                );
+            });
+
+            const result = await this.usersRepository.update({username}, {avatar: url});
+
+            if(result.affected === 0) {
+                return new HttpException(Errors.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+            }
+
+            unlink(file_path, () => {
+                this.logger.log(Messages.AVATAR_DELETED_SUCCESSFULLY);
+            });
+
+            return { message: Messages.AVATAR_UPLOADED_SUCCESSFULLY, status: HttpStatus.OK };
+        } catch(err) {
+            this.logger.log(err.message);
+            return new HttpException(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

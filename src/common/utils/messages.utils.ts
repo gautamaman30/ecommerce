@@ -22,5 +22,8 @@ export const Messages =  Object.freeze({
 
     INVOICE_CREATED_SUCCESSFULLY: 'Invoice created successfully',
     INVOICE_GENERATED_SUCCESSFULLY: 'Invoice generated successfully',
-    INVOICE_DELETED_SUCCESSFULLY: 'Invoice deleted successfully'
+    INVOICE_DELETED_SUCCESSFULLY: 'Invoice deleted successfully',
+
+    AVATAR_UPLOADED_SUCCESSFULLY: 'Avatar uploaded successfully',
+    AVATAR_DELETED_SUCCESSFULLY: 'Avatar deleted successfully'
 })

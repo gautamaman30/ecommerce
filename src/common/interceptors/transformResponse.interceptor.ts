@@ -1,4 +1,4 @@
-import { NestInterceptor, ExecutionContext, CallHandler, Response } from "@nestjs/common";
+import { NestInterceptor, ExecutionContext, CallHandler } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -21,7 +21,7 @@ export class TransformInterceptor implements NestInterceptor {
                     return {
                         data: res,
                         error: null,
-                        status: response.statusCode
+                        status: res.status? res.status : response.statusCode
                     }
                 }
             })

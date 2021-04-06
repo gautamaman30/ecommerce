@@ -1,5 +1,5 @@
 import {Entity, Column, PrimaryColumn, OneToOne, JoinColumn} from 'typeorm';
-import { Users } from 'src/users/entity';
+import { Users } from '../../users/entity';
 
 @Entity()
 export class Wallets {

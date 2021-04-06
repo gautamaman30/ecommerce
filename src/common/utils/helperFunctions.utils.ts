@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Logger } from '@nestjs/common';
-import {hash, compare} from "bcrypt";
-import {sign, Secret} from 'jsonwebtoken';
+import { HttpException, HttpStatus, Logger, Req } from '@nestjs/common';
+import { hash, compare } from "bcrypt";
+import { sign, Secret } from 'jsonwebtoken';
+import { extname } from 'path';
 
-import {Errors} from "./index";
-import {configObj} from '../configEnv';
+import { Errors } from "./index";
+import { configObj } from '../configEnv';
 
 const logger = new Logger('HelperFunctions');
 
@@ -67,5 +68,27 @@ export class HelperFunctions{
                 }
             });
         });
+    }
+
+    imageFilter(@Req() req, file, callback) {
+        logger.log(file);
+        
+        if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+            return callback(null, true);
+        }
+
+        return callback(
+            new HttpException(
+              'Only png, jpg and jpeg files are allowed!',
+              HttpStatus.BAD_REQUEST,
+            ),
+            false,
+        );
+    }
+
+    editFileName(@Req() req, file, callback) {
+        const fileExt = extname(file.originalname);
+        const fileName = req.user.username + fileExt;
+        callback(null, fileName);
     }
 }   
